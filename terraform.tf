@@ -1,13 +1,5 @@
 terraform {
 
-  cloud {
-    organization = "Shadowman"
-
-    workspaces {
-      name = "AWS"
-    }
-  }
-
   required_providers {
     aws = {
       source  = "hashicorp/aws"
