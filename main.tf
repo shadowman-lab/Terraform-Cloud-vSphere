@@ -23,13 +23,13 @@ data "vsphere_network" "network" {
 }
 
 data "vsphere_virtual_machine" "template" {
-  name          = "/Shadowman-DC/vm/${rhel_version}_ShadowMan"
+  name          = "/Shadowman-DC/vm/${var.rhel_version}_ShadowMan"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_virtual_machine" "terraformvms" {
   count            = var.number_of_instances
-  name             = "${instance_name_convention}${count.index}.shadowman.dev"
+  name             = "${var.instance_name_convention}${count.index}.shadowman.dev"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   folder           = "Lab virtual machine"
@@ -55,7 +55,7 @@ resource "vsphere_virtual_machine" "terraformvms" {
   wait_for_guest_ip_timeout  = -1
 
   disk {
-    label            = "${instance_name_convention}${count.index}"
+    label            = "${var.instance_name_convention}${count.index}"
     thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
     size             = data.vsphere_virtual_machine.template.disks.0.size
   }
