@@ -22,36 +22,26 @@ data "vsphere_network" "network" {
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
-data "vsphere_virtual_machine" "template7" {
-  name          = "/Shadowman-DC/vm/RHEL7_ShadowMan"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_virtual_machine" "template8" {
-  name          = "/Shadowman-DC/vm/RHEL8_ShadowMan"
-  datacenter_id = data.vsphere_datacenter.dc.id
-}
-
-data "vsphere_virtual_machine" "template9" {
-  name          = "/Shadowman-DC/vm/RHEL9_ShadowMan"
+data "vsphere_virtual_machine" "template" {
+  name          = "/Shadowman-DC/vm/${rhel_version}_ShadowMan"
   datacenter_id = data.vsphere_datacenter.dc.id
 }
 
 resource "vsphere_virtual_machine" "terraformvms" {
   count            = var.number_of_instances
-  name             = "web${count.index}.shadowman.dev"
+  name             = "${instance_name_convention}${count.index}.shadowman.dev"
   resource_pool_id = data.vsphere_compute_cluster.cluster.resource_pool_id
   datastore_id     = data.vsphere_datastore.datastore.id
   folder           = "Lab virtual machine"
-  firmware         = data.vsphere_virtual_machine.template7.firmware
-  scsi_type        = data.vsphere_virtual_machine.template7.scsi_type
+  firmware         = data.vsphere_virtual_machine.template.firmware
+  scsi_type        = data.vsphere_virtual_machine.template.scsi_type
 
-  num_cpus = data.vsphere_virtual_machine.template7.num_cpus
-  memory   = data.vsphere_virtual_machine.template7.memory
+  num_cpus = data.vsphere_virtual_machine.template.num_cpus
+  memory   = data.vsphere_virtual_machine.template.memory
 
   network_interface {
     network_id = data.vsphere_network.network.id
-    adapter_type = data.vsphere_virtual_machine.template7.network_interface_types[0]
+    adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
 
   tags = [
@@ -65,14 +55,14 @@ resource "vsphere_virtual_machine" "terraformvms" {
   wait_for_guest_ip_timeout  = -1
 
   disk {
-    label            = "server1"
-    thin_provisioned = data.vsphere_virtual_machine.template7.disks.0.thin_provisioned
-    size             = data.vsphere_virtual_machine.template7.disks.0.size
+    label            = "${instance_name_convention}${count.index}"
+    thin_provisioned = data.vsphere_virtual_machine.template.disks.0.thin_provisioned
+    size             = data.vsphere_virtual_machine.template.disks.0.size
   }
 
-  guest_id = data.vsphere_virtual_machine.template7.guest_id
+  guest_id = data.vsphere_virtual_machine.template.guest_id
 
   clone {
-    template_uuid = data.vsphere_virtual_machine.template7.id
+    template_uuid = data.vsphere_virtual_machine.template.id
   }
 }
