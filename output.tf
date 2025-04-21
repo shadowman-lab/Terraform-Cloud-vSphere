@@ -2,5 +2,5 @@
 # SPDX-License-Identifier: MPL-2.0
 
 output "vm_name_terraformvms" {
-  value = one(vsphere_virtual_machine.terraformvms[*].name)
+  value = vsphere_virtual_machine.terraformvms[*].name
 }
