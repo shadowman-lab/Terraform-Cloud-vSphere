@@ -67,7 +67,7 @@ resource "vsphere_virtual_machine" "terraformvms" {
     customize {
       network_interface {}
       linux_options {
-        host_name = "${var.instance_name_convention}${count.index}.shadowman.dev"
+        host_name = "${var.instance_name_convention}${count.index}"
         domain    = "shadowman.dev"
       }
     }
