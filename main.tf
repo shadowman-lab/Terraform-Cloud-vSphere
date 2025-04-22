@@ -44,12 +44,6 @@ resource "vsphere_virtual_machine" "terraformvms" {
     adapter_type = data.vsphere_virtual_machine.template.network_interface_types[0]
   }
 
-  provisioner "remote-exec" {
-    inline = [
-      "hostnamectl set-hostname ${var.instance_name_convention}${count.index}.shadowman.dev",
-    ]
-  }
-
   tags = [
     "urn:vmomi:InventoryServiceTag:008d5941-409f-42bf-af67-69e513e4f3a3:GLOBAL",
     "urn:vmomi:InventoryServiceTag:4a22652c-1463-424a-9353-878197be7088:GLOBAL",
