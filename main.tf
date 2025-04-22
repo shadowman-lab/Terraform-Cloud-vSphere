@@ -65,6 +65,7 @@ resource "vsphere_virtual_machine" "terraformvms" {
   clone {
     template_uuid = data.vsphere_virtual_machine.template.id
     customize {
+      network_interface {}
       linux_options {
         host_name = "${var.instance_name_convention}${count.index}.shadowman.dev"
         domain    = "shadowman.dev"
